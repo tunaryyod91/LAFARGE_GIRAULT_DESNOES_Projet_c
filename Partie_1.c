@@ -4,10 +4,6 @@
 #include "Partie_1.h"
 
 
-int main(void) {
-    printf("Bonjour ! Le projet compile enfin sur macOS 😄\n");
-    return 0;
-}
 
 //question1
 typedef struct cellule {
@@ -81,3 +77,18 @@ liste_adjacence readGraph(const char *filename){
     return G;
 }
 
+// question 4
+void verifier_markov(liste_adjacence G) {
+    for (int i = 0; i < G.taille; i++) {
+        cellule *tmp = G.tab[i].head;
+        float somme = 0;
+        while (tmp != NULL) {
+            somme += tmp->proba;
+            tmp = tmp->suiv;
+        }
+        if (somme < 0.99 || somme > 1.01)
+            printf("Sommet %d : somme = %.2f ❌\n", i + 1, somme);
+        else
+            printf("Sommet %d : somme = %.2f ✅\n", i + 1, somme);
+    }
+}

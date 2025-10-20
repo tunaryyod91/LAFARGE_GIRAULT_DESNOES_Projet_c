@@ -7,4 +7,5 @@ include_directories(.)
 
 add_executable(LAFARGE_GIRAULT_DESNOES_Projet_c
         Partie_1.c
-        Partie_1.h)
+        Partie_1.h
+        main.c)
