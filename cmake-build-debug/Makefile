@@ -152,6 +152,30 @@ Partie_1.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\LAFARGE_GIRAULT_DESNOES_Projet_c.dir\build.make CMakeFiles/LAFARGE_GIRAULT_DESNOES_Projet_c.dir/Partie_1.c.s
 .PHONY : Partie_1.c.s
 
+main.obj: main.c.obj
+.PHONY : main.obj
+
+# target to build an object file
+main.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\LAFARGE_GIRAULT_DESNOES_Projet_c.dir\build.make CMakeFiles/LAFARGE_GIRAULT_DESNOES_Projet_c.dir/main.c.obj
+.PHONY : main.c.obj
+
+main.i: main.c.i
+.PHONY : main.i
+
+# target to preprocess a source file
+main.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\LAFARGE_GIRAULT_DESNOES_Projet_c.dir\build.make CMakeFiles/LAFARGE_GIRAULT_DESNOES_Projet_c.dir/main.c.i
+.PHONY : main.c.i
+
+main.s: main.c.s
+.PHONY : main.s
+
+# target to generate assembly for a file
+main.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\LAFARGE_GIRAULT_DESNOES_Projet_c.dir\build.make CMakeFiles/LAFARGE_GIRAULT_DESNOES_Projet_c.dir/main.c.s
+.PHONY : main.c.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -164,6 +188,9 @@ help:
 	@echo ... Partie_1.obj
 	@echo ... Partie_1.i
 	@echo ... Partie_1.s
+	@echo ... main.obj
+	@echo ... main.i
+	@echo ... main.s
 .PHONY : help
 
 
