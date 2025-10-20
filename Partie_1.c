@@ -54,3 +54,30 @@ void afficher_liste(liste l) {
     }
     printf("NULL\n");
 }
+
+//question 3
+liste_adjacence readGraph(const char *filename){
+    FILE *file = fopen(filename, "rt");
+    if (file==NULL){
+        perror("Erreur d'ouverture");
+        exit(EXIT_FAILURE);
+    }
+    int nbvert;
+    int depart;
+    int arrivee;
+    float proba;
+    fscanf(file, "%d", &nbvert);
+
+    liste_adjacence G;
+    G.taille = nbvert;
+    G.tab = malloc(nbvert *sizeof(liste));
+    for (int i=0; i< nbvert;i++)
+        G.tab[i] = creer_liste_vide();
+
+    while(fscanf(file,"%d %d %f", &depart, &arrivee, &proba)==3)
+        ajouter_cellule(&G.tab[depart-1], arrivee,proba);
+
+    fclose(file);
+    return G;
+}
+
