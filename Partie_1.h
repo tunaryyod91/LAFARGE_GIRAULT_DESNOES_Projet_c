@@ -1,6 +1,18 @@
 //
 // Created by Paul Girault on 20/10/2025.
 //
+#include<stdlib.h>
+#include<stdio.h>
+#include<string.h>
+
+
+
+
+
+
+
+
+
 
 #ifndef LAFARGE_GIRAULT_DESNOES_PROJET_C_PARTIE_1_H
 #define LAFARGE_GIRAULT_DESNOES_PROJET_C_PARTIE_1_H
