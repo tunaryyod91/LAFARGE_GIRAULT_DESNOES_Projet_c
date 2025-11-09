@@ -1,6 +1,29 @@
 #ifndef __HASSE_H__
 #define __HASSE_H__
 
+// ===============================================
+// === STRUCTURES DIAGRAMME DE HASSE ===
+// (Déplacé depuis Partie_2.h pour corriger les erreurs)
+// ===============================================
+
+/**
+ * @brief Structure pour un lien (compatible avec hasse.c).
+ */
+typedef struct {
+    int from; // Classe de départ
+    int to;   // Classe d'arrivée
+} t_link;
+
+/**
+ * @brief Structure pour un tableau de liens (compatible avec hasse.c).
+ */
+typedef struct {
+    t_link *links;
+    int log_size; // Taille logique (utilisée par hasse.c)
+    int phy_size; // Taille physique (pour nos realloc)
+} t_link_array;
+
+
 void removeTransitiveLinks(t_link_array *p_link_array);
 
 /**
