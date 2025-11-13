@@ -4,11 +4,7 @@
 
 #include "Partie_1.h"
 
-// ==============================
-// ====== QUESTION 2 ============
-// ==============================
-
-// Création d'une cellule (arête)
+// Création d'une cellule
 cellule *creer_cellule(int arrivee, float proba) {
     cellule *c = malloc(sizeof(cellule));
     if (c == NULL) {
@@ -35,7 +31,7 @@ void ajouter_cellule(liste *l, int arrivee, float proba) {
     l->head = c;
 }
 
-// Affichage d'une liste (arêtes sortantes d'un sommet)
+// Affichage d'une liste
 void afficher_liste(liste l) {
     cellule *tmp = l.head;
     printf("[head]");
@@ -46,11 +42,10 @@ void afficher_liste(liste l) {
     printf(" -> NULL\n");
 }
 
-// ==============================
-// ====== QUESTION 3 ============
-// ==============================
+//QUESTION 3
 
-// Lecture du fichier texte et création de la liste d'adjacence
+
+// Lecture fichier texte et création de liste d'adjacence
 liste_adjacence readGraph(const char *filename) {
     FILE *file = fopen(filename, "rt");
     if (file == NULL) {
@@ -61,7 +56,7 @@ liste_adjacence readGraph(const char *filename) {
     int nbvert, depart, arrivee;
     float proba;
 
-    // Lecture du nombre de sommets
+    // Lecture nombre sommets
     if (fscanf(file, "%d", &nbvert) != 1) {
         fprintf(stderr, "Erreur : impossible de lire le nombre de sommets.\n");
         fclose(file);
@@ -96,11 +91,10 @@ liste_adjacence readGraph(const char *filename) {
     return G;
 }
 
-// ==============================
-// ====== QUESTION 4 ============
-// ==============================
+// QUESTION 4
 
-// Vérification de la propriété de Markov : somme des proba sortantes ≈ 1
+
+// Vérification de la propriété de Markov
 void verifier_markov(liste_adjacence G) {
     printf("\n=== Vérification du graphe de Markov ===\n");
     for (int i = 0; i < G.taille; i++) {
@@ -113,7 +107,7 @@ void verifier_markov(liste_adjacence G) {
             tmp = tmp->suiv;
         }
 
-        // Vérification (tolérance d'arrondi)
+        // Vérification
         if (somme < 0.99f || somme > 1.01f)
             printf("Sommet %d : somme = %.2f ❌\n", i + 1, somme);
         else

@@ -1,10 +1,6 @@
 #ifndef __HASSE_H__
 #define __HASSE_H__
 
-// ===============================================
-// === STRUCTURES DIAGRAMME DE HASSE ===
-// (Déplacé depuis Partie_2.h pour corriger les erreurs)
-// ===============================================
 
 /**
  * @brief Structure pour un lien (compatible avec hasse.c).

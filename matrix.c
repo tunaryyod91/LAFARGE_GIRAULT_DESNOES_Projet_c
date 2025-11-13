@@ -7,9 +7,9 @@
 #include "matrix.h"
 #include <math.h> // Pour fabsf()
 
-// ===============================================
-// === IMPLÉMENTATION - ÉTAPE 1 (MATRICIEL) ===
-// ===============================================
+
+// IMPLÉMENTATION - ÉTAPE 1 (MATRICIEL)
+
 
 // Allocation et initialisation à zéro
 t_matrix createEmptyMatrix(int n) {
@@ -59,7 +59,7 @@ t_matrix createTransitionMatrix(liste_adjacence G) {
         // i est l'indice 0-indexé (sommet i+1)
         cellule *tmp = G.tab[i].head;
         while (tmp != NULL) {
-            // j est l'indice 0-indexé du sommet d'arrivée (sommet tmp->sommet_arrivee)
+            // j est l'indice 0-indexé (sommet tmp->sommet_arrivee)
             int j = tmp->sommet_arrivee - 1;
             if (j >= 0 && j < n) {
                 M.data[i][j] = tmp->proba;
@@ -143,9 +143,8 @@ void displayMatrix(t_matrix m) {
     }
 }
 
-// ===============================================
-// === IMPLÉMENTATION - ÉTAPE 2 (SOUS-MATRICE) ===
-// ===============================================
+
+// IMPLÉMENTATION ÉTAPE 2 (SOUS-MATRICE)
 
 t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index) {
     if (compo_index < 0 || compo_index >= part.nb_classes) {
@@ -162,7 +161,7 @@ t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index) {
     t_matrix sub_m = createEmptyMatrix(n_sub);
 
     // Mappe les ID de sommets de la classe à leur nouvel indice 0-indexé dans la sous-matrice
-    // La taille du tableau est la taille du graphe original
+
     int *id_to_sub_index = (int*)malloc((matrix.rows + 1) * sizeof(int));
     if (!id_to_sub_index) {
         perror("Erreur d'allocation pour la map d'indices");
@@ -174,7 +173,7 @@ t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index) {
     for(int i = 0; i < matrix.rows + 1; i++) id_to_sub_index[i] = -1;
     for (int i = 0; i < n_sub; i++) {
         // compo.sommets[i] est l'ID 1-indexé du sommet
-        id_to_sub_index[compo.sommets[i]] = i; // Map: ID_sommet -> Indice_sous-matrice
+        id_to_sub_index[compo.sommets[i]] = i; // ID_sommet -> Indice_sous-matrice
     }
 
     // Remplissage de la sous-matrice

@@ -8,11 +8,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// =========================
-// ==== STRUCTURES ========
-// =========================
 
-// cellule : représente une arête du graphe (arrivée + proba)
+// STRUCTURES
+
+
+// cellule : représente une arête du graphe
 typedef struct cellule {
     int sommet_arrivee;        // numéro du sommet d’arrivée
     float proba;               // probabilité de passage
@@ -24,16 +24,15 @@ typedef struct {
     cellule *head;             // tête de liste
 } liste;
 
-// liste_adjacence : tableau dynamique de listes
+// liste_adjacence
 typedef struct {
     int taille;                // nombre de sommets
     liste *tab;                // tableau de listes
 } liste_adjacence;
 
 
-// =========================
-// ==== FONCTIONS ==========
-// =========================
+//FONCTIONS
+
 
 // question 2
 cellule *creer_cellule(int arrivee, float proba);

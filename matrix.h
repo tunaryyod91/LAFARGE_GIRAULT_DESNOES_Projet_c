@@ -16,9 +16,9 @@
 // Définition d'un type pour les éléments de la matrice
 typedef float t_mat_elem;
 
-// ===============================================
-// === STRUCTURES MATRICES ===
-// ===============================================
+
+// STRUCTURES MATRICES
+
 
 /**
  * @brief Structure pour une matrice carrée.
@@ -29,9 +29,9 @@ typedef struct {
 } t_matrix;
 
 
-// ===============================================
-// === PROTOTYPES FONCTIONS - ÉTAPE 1 (MATRICIEL) ===
-// ===============================================
+
+// PROTOTYPES FONCTIONS  ÉTAPE 1
+
 
 /**
  * @brief Crée une matrice n x n remplie avec la valeur 0.
@@ -87,9 +87,9 @@ t_mat_elem diffMatrix(t_matrix M, t_matrix N);
 void displayMatrix(t_matrix m);
 
 
-// ===============================================
-// === PROTOTYPES FONCTIONS - ÉTAPE 2 (SOUS-MATRICE) ===
-// ===============================================
+
+// PROTOTYPES FONCTIONS ÉTAPE 2
+
 
 /**
  * @brief Extrait la sous-matrice correspondant à une composante du graphe.

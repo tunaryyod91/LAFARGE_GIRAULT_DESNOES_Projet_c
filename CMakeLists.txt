@@ -8,10 +8,9 @@ add_executable(LAFARGE_GIRAULT_DESNOES_Projet_c
         main.c
         Partie_1.h
         Partie_1.c
-        Partie_2.h  # <-- AJOUTER
-        Partie_2.c  # <-- AJOUTER
-        utils.h
-        utils.c     # <-- AJOUTER (il manquait .c)
+        Partie_2.h
+        Partie_2.c
+        utils.c
         hasse.h
         hasse.c
         matrix.h

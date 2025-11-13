@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// ===============================================
-// === ÉTAPE 1 : STRUCTURES ALGORITHME DE TARJAN ===
-// ===============================================
+
+// ÉTAPE 1 STRUCTURES ALGORITHME DE TARJAN
+
 
 /**
  * @brief Structure pour stocker les informations d'un sommet
@@ -54,15 +54,6 @@ typedef struct {
 
 
 
-//ÉTAPE 2 : STRUCTURES DIAGRAMME DE HASSE
-
-
-// (Ces structures sont maintenant dans hasse.h)
-
-
-
-
-// PROTOTYPES FONCTIONS - ÉTAPE 1
 
 
 // Fonctions utilitaires (Pile)
