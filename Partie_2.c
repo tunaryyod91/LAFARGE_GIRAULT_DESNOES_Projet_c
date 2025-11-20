@@ -243,19 +243,206 @@ t_partition algorithme_tarjan(liste_adjacence G) {
 
 
 int* creer_tableau_appartenance(t_partition partition, int nb_sommets_graphe) {
-    printf("\n[TODO: Étape 2 - Création tableau appartenance]\n");
-    return NULL;
+    // tab[s] = indice de la classe (0..nb_classes-1) à laquelle appartient le sommet s
+    // On prend un tableau 1..nb_sommets_graphe pour coller à la numérotation des sommets
+    int *tab = malloc((nb_sommets_graphe + 1) * sizeof(int));
+    if (!tab) {
+        perror("Erreur allocation tableau appartenance");
+        exit(EXIT_FAILURE);
+    }
+
+    // Initialiser à -1 (sécurité)
+    for (int i = 0; i <= nb_sommets_graphe; i++) {
+        tab[i] = -1;
+    }
+
+    // Pour chaque classe de la partition, marquer ses sommets
+    for (int c = 0; c < partition.nb_classes; c++) {
+        t_classe *classe = &partition.classes[c];
+        for (int k = 0; k < classe->nb_sommets; k++) {
+            int s = classe->sommets[k];  // ex : 1, 5, 7
+            if (s >= 1 && s <= nb_sommets_graphe) {
+                tab[s] = c;              // le sommet s appartient à la classe d’indice c
+            }
+        }
+    }
+
+    return tab;
+}
+// petit helper interne : teste si un lien (from,to) existe déjà
+static int lien_existe(t_link_array *arr, int from, int to) {
+    for (int i = 0; i < arr->log_size; i++) {
+        if (arr->links[i].from == from && arr->links[i].to == to) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 t_link_array* creer_diagramme_hasse(liste_adjacence G, t_partition partition, int* tab_appartenance) {
-    printf("\n[TODO: Étape 2 - Création diagramme Hasse]\n");
-    return NULL;
-}
+    t_link_array *res = malloc(sizeof(t_link_array));
+    if (!res) {
+        perror("Erreur allocation t_link_array");
+        exit(EXIT_FAILURE);
+    }
 
+    res->log_size = 0;
+    res->phy_size = 8; // capacité initiale
+    res->links = malloc(res->phy_size * sizeof(t_link));
+    if (!res->links) {
+        perror("Erreur allocation links");
+        free(res);
+        exit(EXIT_FAILURE);
+    }
+
+    // Parcourt tous les sommets du graphe
+    // Les sommets sont numérotés 1..G.taille
+    for (int s = 1; s <= G.taille; s++) {
+        int Cs = tab_appartenance[s];   // indice de la classe du sommet s
+        if (Cs < 0) continue;          // sécurité
+
+        cellule *voisin = G.tab[s - 1].head; // s-1 car tab[] est 0-indexé
+        while (voisin != NULL) {
+            int t  = voisin->sommet_arrivee;
+            int Ct = tab_appartenance[t];
+
+            if (Ct >= 0 && Cs != Ct) {
+                // Lien entre la classe Cs et la classe Ct
+                if (!lien_existe(res, Cs, Ct)) {
+                    // Agrandir si besoin
+                    if (res->log_size == res->phy_size) {
+                        res->phy_size *= 2;
+                        res->links = realloc(res->links, res->phy_size * sizeof(t_link));
+                        if (!res->links) {
+                            perror("Erreur realloc links");
+                            exit(EXIT_FAILURE);
+                        }
+                    }
+                    res->links[res->log_size].from = Cs;
+                    res->links[res->log_size].to   = Ct;
+                    res->log_size++;
+                }
+            }
+
+            voisin = voisin->suiv;
+        }
+    }
+
+    // Ici on a le graphe des classes.
+    // Si tu veux directement le diagramme de Hasse, tu peux appeler :
+    // removeTransitiveLinks(res);
+
+    return res;
+}
 void afficher_diagramme_mermaid(t_partition partition, t_link_array *liens) {
-    printf("\n[TODO: Étape 2 - Affichage Mermaid]\n");
+    const char *filename = "hasse.mmd";
+    FILE *f = fopen(filename, "wt");
+    if (!f) {
+        perror("Erreur ouverture fichier Mermaid");
+        return;
+    }
+
+    // En-tête pour Mermaid
+    fprintf(f, "---\n");
+    fprintf(f, "config:\n");
+    fprintf(f, "  layout: elk\n");
+    fprintf(f, "  theme: neo\n");
+    fprintf(f, "---\n");
+    fprintf(f, "flowchart TD\n");
+
+    // 1) Noeuds = classes
+    for (int c = 0; c < partition.nb_classes; c++) {
+        t_classe *classe = &partition.classes[c];
+
+        // Identifiant Mermaid = nom de la classe (ex : C1)
+        fprintf(f, "%s[\"%s : {", classe->nom, classe->nom);
+        for (int k = 0; k < classe->nb_sommets; k++) {
+            fprintf(f, "%d", classe->sommets[k]);
+            if (k < classe->nb_sommets - 1) {
+                fprintf(f, ",");
+            }
+        }
+        fprintf(f, "}\"]\n");
+    }
+
+    // 2) Arcs = liens entre classes
+    for (int i = 0; i < liens->log_size; i++) {
+        int from = liens->links[i].from; // indice de classe
+        int to   = liens->links[i].to;   // indice de classe
+
+        if (from >= 0 && from < partition.nb_classes &&
+            to   >= 0 && to   < partition.nb_classes) {
+            fprintf(f, "%s --> %s\n",
+                    partition.classes[from].nom,
+                    partition.classes[to].nom);
+        }
+    }
+
+    fclose(f);
+    printf("\n✅ Fichier Mermaid du diagramme de Hasse généré dans '%s'.\n", filename);
 }
 
 void analyser_graphe(t_partition partition, t_link_array *liens) {
-    printf("\n[TODO: Étape 3 - Analyse du graphe]\n");
+    int nb_classes = partition.nb_classes;
+    if (nb_classes == 0) {
+        printf("\nAucune classe dans la partition.\n");
+        return;
+    }
+
+    int *est_transitoire = calloc(nb_classes, sizeof(int));
+    if (!est_transitoire) {
+        perror("Erreur allocation est_transitoire");
+        exit(EXIT_FAILURE);
+    }
+
+    // Une classe est transitoire si elle a au moins un lien sortant
+    for (int i = 0; i < liens->log_size; i++) {
+        int from = liens->links[i].from;
+        if (from >= 0 && from < nb_classes) {
+            est_transitoire[from] = 1;
+        }
+    }
+
+    printf("\n=== Analyse du graphe de Markov ===\n");
+    int nb_persistantes = 0;
+    int nb_absorbants   = 0;
+
+    for (int c = 0; c < nb_classes; c++) {
+        t_classe *classe = &partition.classes[c];
+
+        printf("Classe %s : {", classe->nom);
+        for (int k = 0; k < classe->nb_sommets; k++) {
+            printf("%d", classe->sommets[k]);
+            if (k < classe->nb_sommets - 1) printf(",");
+        }
+        printf("} -> ");
+
+        if (est_transitoire[c]) {
+            printf("transitoire\n");
+        } else {
+            printf("persistante\n");
+            nb_persistantes++;
+
+            // Classe persistante avec un seul état -> état absorbant
+            if (classe->nb_sommets == 1) {
+                printf("   -> L'état %d est absorbant.\n", classe->sommets[0]);
+                nb_absorbants++;
+            }
+        }
+    }
+
+    // Graphe irréductible ?
+    if (nb_classes == 1) {
+        printf("\nLe graphe est irréductible (une seule classe).\n");
+    } else {
+        printf("\nLe graphe n'est pas irréductible (il y a %d classes).\n", nb_classes);
+    }
+
+    if (nb_absorbants == 0) {
+        printf("Aucun état absorbant.\n");
+    } else {
+        printf("%d état(s) absorbant(s) au total.\n", nb_absorbants);
+    }
+
+    free(est_transitoire);
 }
