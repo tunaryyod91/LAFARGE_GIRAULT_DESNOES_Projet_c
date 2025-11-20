@@ -68,6 +68,8 @@ int main() {
     // Pour stocker les résultats des Parties 2 et 3
     t_partition partition;
     int partition_calculee = 0;
+    int *tab_appartenance = NULL;
+    t_link_array *liens = NULL;
 
     t_matrix M;              // Matrice de transition du graphe
     int matrice_chargee = 0;
@@ -83,6 +85,7 @@ int main() {
         printf("6. Exporter le graphe au format Mermaid (.mmd)\n");
         printf("\n--- Partie 2 ---\n");
         printf("4. Calculer les classes (Tarjan)\n");
+        printf("7. Diagramme de Hasse + analyse des classes\n");
         printf("\n--- Partie 3 ---\n");
         printf("5. Calculs de distributions (Matriciel/Export CSV)\n");
         printf("-----------------------------\n");
@@ -168,6 +171,46 @@ int main() {
                 generer_fichier_mermaid(G, fichier_mmd);
                 break;
             }
+
+            case 7: {
+                if (!graphe_charge) {
+                    printf("\n⚠️  Aucun graphe n'est chargé. Utilisez l'option 1 d'abord.\n");
+                    break;
+                }
+                if (!partition_calculee) {
+                    printf("\n⚠️  Aucune partition calculée. Utilisez d'abord l'option 4 (Tarjan).\n");
+                    break;
+                }
+
+                // Libérer d’anciens résultats si on relance
+                if (tab_appartenance != NULL) {
+                    free(tab_appartenance);
+                    tab_appartenance = NULL;
+                }
+                if (liens != NULL) {
+                    free(liens->links);
+                    free(liens);
+                    liens = NULL;
+                }
+
+                printf("\n⚙️  Création du tableau d'appartenance sommet → classe...\n");
+                tab_appartenance = creer_tableau_appartenance(partition, G.taille);
+
+                printf("⚙️  Création du graphe des classes (diagramme de Hasse brut)...\n");
+                liens = creer_diagramme_hasse(G, partition, tab_appartenance);
+
+                printf("⚙️  Suppression des liens transitifs (Hasse réduit)...\n");
+                removeTransitiveLinks(liens);
+
+                printf("⚙️  Génération du fichier Mermaid 'hasse.mmd'...\n");
+                afficher_diagramme_mermaid(partition, liens);
+
+                printf("⚙️  Analyse des classes (transitoires, persistantes, absorbantes)...\n");
+                analyser_graphe(partition, liens);
+
+                break;
+            }
+
             case 4:
                 if (!graphe_charge) {
                     printf("\n⚠️  Aucun graphe n'est chargé. Utilisez l'option 1 d'abord.\n");
@@ -273,6 +316,13 @@ int main() {
                 }
                 if (matrice_chargee) {
                     freeMatrix(&M);
+                }
+                if (tab_appartenance != NULL) {
+                    free(tab_appartenance);
+                }
+                if (liens != NULL) {
+                    free(liens->links);
+                    free(liens);
                 }
                 printf("\n👋 Fin du programme. Au revoir !\n");
                 break;
