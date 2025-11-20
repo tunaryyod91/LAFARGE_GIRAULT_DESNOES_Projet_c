@@ -1,9 +1,64 @@
 #include "Partie_1.h"
 #include "Partie_2.h"
-#include "matrix.h" // <-- AJOUTÉ
+#include "matrix.h"
 #include <string.h>
 #include <limits.h>
+#include <stdio.h> // Redondant mais s'assurer des headers pour FILE*
 
+// =========================================================
+// FONCTION UTILITAIRE D'EXPORT POUR LE TRACÉ (Question 1.b)
+// =========================================================
+
+/**
+ * @brief Exporte une ligne de la matrice de transition M^n vers un fichier CSV.
+ * Cette ligne représente la distribution Pi(n) = Pi(0) * M^n pour un départ donné.
+ *
+ * @param n Le numéro du pas (étape).
+ * @param M_power_n La matrice de transition P^n.
+ * @param start_state_index L'indice de la ligne à exporter (0-indexé), correspondant à l'état de départ.
+ * @param filepath Le chemin du fichier d'export (e.g., "Pi_A_n_data.csv").
+ * @param append_mode 0 pour créer/écraser le fichier et écrire l'en-tête, 1 pour ajouter.
+ */
+void exportDistributionRow(int n, t_matrix M_power_n, int start_state_index, const char *filepath, int append_mode) {
+    // Le mode "w" pour le premier appel (écrire l'en-tête), "a" pour les suivants
+    FILE *file = fopen(filepath, append_mode ? "a" : "w");
+    if (file == NULL) {
+        perror("Erreur: impossible d'ouvrir le fichier d'export CSV");
+        return;
+    }
+
+    if (start_state_index < 0 || start_state_index >= M_power_n.rows) {
+        fprintf(stderr, "Erreur: Indice de ligne invalide pour l'export.\n");
+        fclose(file);
+        return;
+    }
+
+    // Écrire l'en-tête CSV (uniquement au premier appel)
+    if (!append_mode) {
+        fprintf(file, "Etape");
+        for (int j = 0; j < M_power_n.rows; j++) {
+            fprintf(file, ",P(Xn=%d)", j + 1); // P(Xn=1), P(Xn=2), ...
+        }
+        fprintf(file, "\n");
+    }
+
+    // Écrire le numéro de pas
+    fprintf(file, "%d", n);
+
+    // Écrire les probabilités pour la ligne correspondant à l'état de départ
+    for (int j = 0; j < M_power_n.rows; j++) {
+        // Utilisation de .10f pour plus de précision (10 décimales)
+        fprintf(file, ",%.10f", M_power_n.data[start_state_index][j]);
+    }
+    fprintf(file, "\n");
+
+    fclose(file);
+}
+
+
+// =========================================================
+// FONCTION PRINCIPALE main()
+// =========================================================
 int main() {
     int choix;
     liste_adjacence G;       // structure du graphe
@@ -28,7 +83,7 @@ int main() {
         printf("\n--- Partie 2 ---\n");
         printf("4. Calculer les classes (Tarjan)\n");
         printf("\n--- Partie 3 ---\n");
-        printf("5. Calculs de distributions (Matriciel)\n");
+        printf("5. Calculs de distributions (Matriciel/Export CSV)\n");
         printf("-----------------------------\n");
         printf("0. Quitter\n");
         printf("-----------------------------\n");
@@ -51,15 +106,13 @@ int main() {
 
         switch (choix) {
             case 1: {
+                // NOTE: Utilisez le chemin relatif vers votre fichier de graphe 27 états.
+                // Ex: ../Data/votre_fichier_27_etats.txt
                 printf("\nEntrez le chemin du fichier à charger (ex: ../data/meteo.txt) : ");
                 fgets(chemin, sizeof(chemin), stdin);
                 chemin[strcspn(chemin, "\n")] = '\0';
 
                 // Libération des anciennes structures
-                if (graphe_charge) {
-                    // Libération de la liste d'adjacence G (si vous l'aviez fait, sinon il y a une fuite)
-                    // NOTE: readGraph n'a pas de fonction de libération correspondante ici.
-                }
                 if (partition_calculee) {
                     liberer_partition(&partition);
                     partition_calculee = 0;
@@ -109,7 +162,7 @@ int main() {
                 }
                 break;
 
-                // --- NOUVEAU CASE 5 (Partie 3) ---
+                // --- NOUVEAU CASE 5 (Partie 3) - Calcul P^n et Export CSV ---
             case 5: {
                 if (!graphe_charge) {
                     printf("\n⚠️  Aucun graphe n'est chargé. Utilisez l'option 1 d'abord.\n");
@@ -121,71 +174,72 @@ int main() {
                     matrice_chargee = 1;
                 }
 
-                printf("\n=== Matrice de Transition M ===\n");
+                // --- PARAMÈTRES POUR LA QUESTION 1 (Départ État 2) ---
+                // Ces paramètres sont facilement modifiables pour les questions 4, 5, 6, 7
+                const int START_STATE = 2; // État de départ (1-indexé)
+                const int START_ROW_INDEX = START_STATE - 1; // Ligne dans la matrice (0-indexé)
+                const char *EXPORT_FILENAME = "Pi_A_n_data.csv";
+                const int MAX_PLOT_STEPS = 50; // Nombre de pas pour le tracé (suffisant pour la convergence)
+                // ----------------------------------------------------
+
+
+                printf("\n=== Calcul de la convergence et Exportation ===\n");
+                printf("Matrice P (%d x %d):\n", M.rows, M.rows);
                 displayMatrix(M);
+                printf("\nDépart: État %d. Exportation de Pi(n) vers '%s' pour n=1 à %d...\n", START_STATE, EXPORT_FILENAME, MAX_PLOT_STEPS);
 
-                // 2. Calcul de M^3 (Exemple de validation)
-                printf("\n=== Calcul de M^3 (puissance pour validation) ===\n");
-                t_matrix M_power_n = createTransitionMatrix(G); // M^1 = M
-                t_matrix M_temp = createEmptyMatrix(G.taille);
-
-                // M^2 = M^1 * M
-                multiplyMatrices(M_power_n, M, M_temp);
-                copyMatrix(M_power_n, M_temp);
-
-                // M^3 = M^2 * M
-                multiplyMatrices(M_power_n, M, M_temp);
-                copyMatrix(M_power_n, M_temp);
-
-                printf("M^3:\n");
-                displayMatrix(M_power_n);
-
-                freeMatrix(&M_power_n);
-                freeMatrix(&M_temp);
-
-
-                // 3. Calcul de M^n pour la convergence
-                printf("\n=== Calcul de la convergence (|M^n - M^(n-1)| < 0.01) ===\n");
-
-                // M_curr stockera M^n, M_prev stockera M^(n-1)
-                t_matrix M_curr = createTransitionMatrix(G); // Commence à M^1
+                // M_curr stockera P^n, M_prev stockera P^(n-1)
+                t_matrix M_curr = createTransitionMatrix(G); // Commence à P^1
                 t_matrix M_prev = createEmptyMatrix(G.taille);
-                t_matrix M_next = createEmptyMatrix(G.taille); // Pour stocker M^(n+1)
+                t_matrix M_next = createEmptyMatrix(G.taille); // Pour stocker P^(n+1)
 
                 float epsilon = 0.01f;
-                float diff = 100.0f; // Initialisation > epsilon
+                float diff = 100.0f;
                 int n = 1;
 
-                while (n < 50 && diff >= epsilon) { // Limite de 50 itérations
+                // --- EXPORT DE L'ÉTAPE n=1 ---
+                // M_curr est P^1. La ligne 'START_ROW_INDEX' de P^1 est Pi(1)
+                exportDistributionRow(n, M_curr, START_ROW_INDEX, EXPORT_FILENAME, 0); // Export n=1 (initialisation du fichier, append_mode=0)
 
-                    // M_prev = M^n (pour comparaison)
+                // --- BOUCLE POUR n=2 à MAX_PLOT_STEPS (ou convergence) ---
+                for (n = 2; n <= MAX_PLOT_STEPS; n++) {
+
+                    // 1. M_prev = P^(n-1) (pour comparaison)
                     copyMatrix(M_prev, M_curr);
 
-                    // Calcul M^(n+1) = M^n * M
+                    // 2. Calcul P^n = P^(n-1) * P
                     multiplyMatrices(M_curr, M, M_next);
 
-                    // M_curr devient M^(n+1)
+                    // 3. M_curr devient P^n
                     copyMatrix(M_curr, M_next);
 
-                    // Calcule la différence |M^(n+1) - M^n|
+                    // 4. Export des données pour le tracé
+                    exportDistributionRow(n, M_curr, START_ROW_INDEX, EXPORT_FILENAME, 1); // Export (append_mode=1)
+
+                    // 5. Calcul de la différence (pour l'analyse de convergence)
                     diff = diffMatrix(M_curr, M_prev);
 
-                    n++;
+                    if (diff < epsilon) {
+                        printf("\n✅ Convergence atteinte (|M^n - M^(n-1)| < %.2f) à n = %d.\n", epsilon, n);
+                        printf("Différence |M^n - M^(n-1)| = %.6f\n", diff);
+                        // Affichage de la distribution limite (la ligne de l'état de départ)
+                        printf("\n=== Distribution limite approchée (n=%d) ===\n", n);
+                        printf("Pi(%d) [Départ État %d]: |", n, START_STATE);
+                        for(int j=0; j < G.taille; j++) {
+                            printf(" %.4f", M_curr.data[START_ROW_INDEX][j]);
+                        }
+                        printf(" |\n");
+                        break; // Sortir si convergence atteinte
+                    }
                 }
-                n--; // Rétablir l'indice à la dernière matrice calculée
 
-                if (diff < epsilon) {
-                    printf("\n✅ Convergence atteinte à n = %d.\n", n);
-                    printf("Différence |M^n - M^(n-1)| = %.6f\n", diff);
-                    printf("\n=== M^%d (Matrice stationnaire/limite) ===\n", n);
-                    displayMatrix(M_curr);
-                } else {
-                    printf("\n⚠️  La convergence n'a pas été atteinte après %d itérations. Dernière différence: %.6f\n", n, diff);
-                    printf("Dernière matrice M^n:\n");
-                    displayMatrix(M_curr);
+                if (n > MAX_PLOT_STEPS) {
+                    printf("\n⚠️  La convergence n'a pas été atteinte après %d itérations (|M^n - M^(n-1)| >= %.2f). Dernière différence: %.6f\n", MAX_PLOT_STEPS, epsilon, diff);
+                    printf("La dernière distribution Pi(n) exportée est pour n=%d.\n", MAX_PLOT_STEPS);
                 }
 
-                // Libération des matrices de convergence
+
+                // Libération des matrices
                 freeMatrix(&M_curr);
                 freeMatrix(&M_prev);
                 freeMatrix(&M_next);
