@@ -45,5 +45,14 @@ liste_adjacence readGraph(const char *filename);
 
 // question 4
 void verifier_markov(liste_adjacence G);
+// question 4
+void verifier_markov(liste_adjacence G);
 
+// question 5 - export Mermaid
+
+// génération d'un identifiant de sommet de type A, B, ..., Z, AA, AB, ...
+char *getId(int num);
+
+// export du graphe au format Mermaid (.mmd)
+void generer_fichier_mermaid(liste_adjacence G, const char *filename);
 #endif // PARTIE_1_H

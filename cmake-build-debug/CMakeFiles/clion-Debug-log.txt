@@ -1,10 +1,10 @@
-/Users/edouardlafarge/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Users/edouardlafarge/Applications/CLion.app/Contents/bin/ninja/mac/aarch64/ninja -G Ninja -S /Users/edouardlafarge/CLionProjects/LAFARGE_GIRAULT_DESNOES_Projet_c -B /Users/edouardlafarge/CLionProjects/LAFARGE_GIRAULT_DESNOES_Projet_c/cmake-build-debug
+/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/aarch64/ninja -G Ninja -S /Users/paulgirault/CLionProjects/LAFARGE_GIRAULT_DESNOES_Projet_c -B /Users/paulgirault/CLionProjects/LAFARGE_GIRAULT_DESNOES_Projet_c/cmake-build-debug
 -- The C compiler identification is AppleClang 17.0.0.17000404
 -- Detecting C compiler ABI info
 -- Detecting C compiler ABI info - done
--- Check for working C compiler: /usr/bin/cc - skipped
+-- Check for working C compiler: /Library/Developer/CommandLineTools/usr/bin/cc - skipped
 -- Detecting C compile features
 -- Detecting C compile features - done
--- Configuring done (3.1s)
+-- Configuring done (0.3s)
 -- Generating done (0.0s)
--- Build files have been written to: /Users/edouardlafarge/CLionProjects/LAFARGE_GIRAULT_DESNOES_Projet_c/cmake-build-debug
+-- Build files have been written to: /Users/paulgirault/CLionProjects/LAFARGE_GIRAULT_DESNOES_Projet_c/cmake-build-debug

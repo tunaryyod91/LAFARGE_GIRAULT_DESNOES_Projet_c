@@ -80,6 +80,7 @@ int main() {
         printf("1. Charger un graphe depuis un fichier\n");
         printf("2. Afficher la liste d'adjacence\n");
         printf("3. Vérifier si le graphe est de Markov\n");
+        printf("6. Exporter le graphe au format Mermaid (.mmd)\n");
         printf("\n--- Partie 2 ---\n");
         printf("4. Calculer les classes (Tarjan)\n");
         printf("\n--- Partie 3 ---\n");
@@ -148,6 +149,25 @@ int main() {
                 }
                 break;
 
+            case 6: {
+                if (!graphe_charge) {
+                    printf("\n⚠️  Aucun graphe n'est chargé. Utilisez l'option 1 d'abord.\n");
+                    break;
+                }
+
+                char fichier_mmd[256];
+                printf("\nEntrez le nom du fichier Mermaid à générer (ex: graphe.mmd) : ");
+                fgets(fichier_mmd, sizeof(fichier_mmd), stdin);
+                fichier_mmd[strcspn(fichier_mmd, "\n")] = '\0';
+
+                if (strlen(fichier_mmd) == 0) {
+                    printf("\n⚠️  Nom de fichier vide, génération annulée.\n");
+                    break;
+                }
+
+                generer_fichier_mermaid(G, fichier_mmd);
+                break;
+            }
             case 4:
                 if (!graphe_charge) {
                     printf("\n⚠️  Aucun graphe n'est chargé. Utilisez l'option 1 d'abord.\n");
