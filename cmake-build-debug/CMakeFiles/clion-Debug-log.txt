@@ -1,10 +1,19 @@
-/Users/edouardlafarge/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Users/edouardlafarge/Applications/CLion.app/Contents/bin/ninja/mac/aarch64/ninja -G Ninja -S /Users/edouardlafarge/CLionProjects/LAFARGE_GIRAULT_DESNOES_Projet_c -B /Users/edouardlafarge/CLionProjects/LAFARGE_GIRAULT_DESNOES_Projet_c/cmake-build-debug
--- The C compiler identification is AppleClang 17.0.0.17000404
+C:\Users\edoua\AppData\Local\Programs\CLion\bin\cmake\win\x64\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" -S C:\Users\edoua\CLionProjects\LAFARGE_GIRAULT_DESNOES_Projet_c -B C:\Users\edoua\CLionProjects\LAFARGE_GIRAULT_DESNOES_Projet_c\cmake-build-debug
+CMake Deprecation Warning:
+  Support for "Extra Generators" like
+
+    CodeBlocks
+
+  is deprecated and will be removed from a future version of CMake.  IDEs may
+  use the cmake-file-api(7) to view CMake-generated project build trees.
+
+
+-- The C compiler identification is GNU 13.1.0
 -- Detecting C compiler ABI info
 -- Detecting C compiler ABI info - done
--- Check for working C compiler: /usr/bin/cc - skipped
+-- Check for working C compiler: C:/Users/edoua/AppData/Local/Programs/CLion/bin/mingw/bin/gcc.exe - skipped
 -- Detecting C compile features
 -- Detecting C compile features - done
--- Configuring done (0.7s)
+-- Configuring done (1.5s)
 -- Generating done (0.0s)
--- Build files have been written to: /Users/edouardlafarge/CLionProjects/LAFARGE_GIRAULT_DESNOES_Projet_c/cmake-build-debug
+-- Build files have been written to: C:/Users/edoua/CLionProjects/LAFARGE_GIRAULT_DESNOES_Projet_c/cmake-build-debug
